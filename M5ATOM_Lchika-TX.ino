@@ -6,7 +6,8 @@
 #include <WiFi.h>
 
 const int CDS_PIN = 33; // CdSセルの接続端子番号です。
-const int CDS_VAL = 0; // 明暗の閾値を設定します。実使用環境でのCdSセルの出力値より判断して設定します。
+const int CDS_VAL = 0; 
+const int CDS_TH = 100; // 明暗の閾値を設定します。実使用環境でのCdSセルの出力値より判断して設定します。
 bool CDS_FLAG = false;
 
 uint8_t slaveAddress[] = { 0x**, 0x**, 0x**, 0x**, 0x**, 0x** }; // 受信機のMACアドレスに書き換えます。
@@ -46,20 +47,20 @@ void loop() {
     Serial.println(CDS_VAL);
     delay(50);
 
-    if (CDS_VAL>100){
+    if (CDS_VAL>CDS_TH){  
         CDS_FLAG == true;
         }
     else{
         CDS_FLAG == false;    
         }   
-    if (CDS_VAL>100 && CDS_FLAG == false) {
+    if (CDS_VAL>CDS_TH && CDS_FLAG == false) {
         uint8_t data[1] = {222}; // 送信データ
         esp_err_t result = esp_now_send(slaveAddress, data, sizeof(data));
         
         Serial.print("Send Status: 222");
         CDS_FLAG = true;
     }
-    else if(CDS_VAL<100 && CDS_FLAG == true){
+    else if(CDS_VAL<CDS_TH && CDS_FLAG == true){
         uint8_t data[1] = {333}; // 送信データ
         esp_err_t result = esp_now_send(slaveAddress, data, sizeof(data));
 
